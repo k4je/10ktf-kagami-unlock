@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10KTF Kagami — Circular Photo Cropper (1080×1080)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-ring"></div>
+      <div>
+        <h1>10KTF Kagami Photo Cropper</h1>
+        <p class="subtitle">1080×1080 Circular Preview &bull; Standard 4:2:0 JFIF Export &bull; 100% Local in Browser</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="btnAdd" class="btn btn-secondary">+ Add Photos</button>
+      <button id="btnDownloadAll" class="btn btn-primary" disabled>Download All (.zip)</button>
+      <input id="fileInput" type="file" accept="image/*" multiple hidden />
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="stage-panel">
+      <div id="dropZone" class="drop-zone">
+        <div class="mirror-bezel">
+          <canvas id="previewCanvas" width="540" height="540"></canvas>
+          <div id="safeGuide" class="safe-guide" title="5% bezel safe-zone"></div>
+          <div id="emptyPrompt" class="empty-prompt">
+            <div class="empty-icon">&#128247;</div>
+            <p><strong>Drop photos here</strong> or click <em>+ Add Photos</em></p>
+            <span>Drag inside the circle to pan &bull; Scroll or slide to zoom</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <label class="control-group">
+          <span>Zoom</span>
+          <input id="zoomSlider" type="range" min="1" max="3.5" step="0.01" value="1" disabled />
+          <span id="zoomVal" class="mono">1.00×</span>
+        </label>
+        <label class="control-group checkbox-group">
+          <input id="toggleGuide" type="checkbox" checked />
+          <span>Safe-zone ring</span>
+        </label>
+        <div class="control-buttons">
+          <button id="btnReset" class="btn btn-secondary" disabled>Center</button>
+          <button id="btnDownloadOne" class="btn btn-primary" disabled>Download 1080×1080 JPG</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <div class="card-header">
+          <h2>Photos (<span id="photoCount">0</span>)</h2>
+          <button id="btnClear" class="btn-link" disabled>Clear all</button>
+        </div>
+        <div id="thumbList" class="thumb-list">
+          <p class="muted">No photos loaded yet.</p>
+        </div>
+      </div>
+
+      <div class="card tips-card">
+        <h2>Kagami Media Tips</h2>
+        <ul>
+          <li><strong>Photos:</strong> Exported as <code>1080×1080</code> baseline 4:2:0 JFIF JPEG (prevents hardware decoder green tint).</li>
+          <li><strong>Circular Bezel:</strong> Keep faces &amp; subjects inside the dashed ring.</li>
+          <li><strong>Videos:</strong> Convert with <code>ffmpeg</code>:</li>
+        </ul>
+        <pre class="code-box" id="ffmpegCmd">ffmpeg -i input.mp4 \
+  -vf "crop=min(iw\,ih):min(iw\,ih),scale=1080:1080:flags=lanczos" \
+  -c:v libx264 -profile:v main -level 4.1 \
+  -pix_fmt yuv420p -r 24 -b:v 6M -an \
+  output_kagami.mp4</pre>
+        <button id="btnCopyFfmpeg" class="btn btn-secondary btn-small">Copy ffmpeg command</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

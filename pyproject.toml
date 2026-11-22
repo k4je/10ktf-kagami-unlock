@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "10ktf-kagami-unlock"
+version = "1.0.0"
+description = "Safe plug-and-play USB Mass Storage unlocker for the 10KTF Kagami display mirror."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+usb = ["pyusb>=1.2.1"]
+
+[project.scripts]
+kagami-unlock = "kagami_unlock.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["kagami_unlock*"]
+
+[tool.setuptools.package-data]
+kagami_unlock = ["payload/*.bin"]

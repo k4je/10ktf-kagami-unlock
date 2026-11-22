@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.venv/
+kagami_backups/
+*.o
+*.elf
+*.map
+*.asm
+*.padded.bin
