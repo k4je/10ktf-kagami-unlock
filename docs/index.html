@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>10KTF Kagami — Circular Photo Cropper (1080×1080)</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <header class="topbar">
@@ -39,7 +39,7 @@
       <div class="controls">
         <label class="control-group">
           <span>Zoom</span>
-          <input id="zoomSlider" type="range" min="1" max="3.5" step="0.01" value="1" disabled />
+          <input id="zoomSlider" type="range" min="0.25" max="4" step="0.01" value="1" disabled />
           <span id="zoomVal" class="mono">1.00×</span>
         </label>
         <label class="control-group checkbox-group">
@@ -47,7 +47,10 @@
           <span>Safe-zone ring</span>
         </label>
         <div class="control-buttons">
-          <button id="btnReset" class="btn btn-secondary" disabled>Center</button>
+          <div class="control-buttons-left">
+            <button id="btnFit" class="btn btn-secondary" disabled>Fit</button>
+            <button id="btnReset" class="btn btn-secondary" disabled>Center</button>
+          </div>
           <button id="btnDownloadOne" class="btn btn-primary" disabled>Download 1080×1080 JPG</button>
         </div>
       </div>
@@ -81,6 +84,6 @@
     </aside>
   </main>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

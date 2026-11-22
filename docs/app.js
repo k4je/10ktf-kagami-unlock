@@ -2,6 +2,8 @@
 (() => {
   const OUTPUT_SIZE = 1080;
   const JPEG_QUALITY = 0.92;
+  const MIN_ZOOM = 0.25;
+  const MAX_ZOOM = 4.0;
 
   const canvas = document.getElementById("previewCanvas");
   const ctx = canvas.getContext("2d");
@@ -13,6 +15,7 @@
   const zoomVal = document.getElementById("zoomVal");
   const toggleGuide = document.getElementById("toggleGuide");
   const btnAdd = document.getElementById("btnAdd");
+  const btnFit = document.getElementById("btnFit");
   const btnReset = document.getElementById("btnReset");
   const btnDownloadOne = document.getElementById("btnDownloadOne");
   const btnDownloadAll = document.getElementById("btnDownloadAll");
@@ -33,16 +36,6 @@
   let dragOrigX = 0;
   let dragOrigY = 0;
 
-  function clampOffsets(item, size) {
-    const baseScale = Math.max(size / item.img.naturalWidth, size / item.img.naturalHeight);
-    const drawW = item.img.naturalWidth * baseScale * item.zoom;
-    const drawH = item.img.naturalHeight * baseScale * item.zoom;
-    const maxX = Math.max(0, (drawW - size) / 2);
-    const maxY = Math.max(0, (drawH - size) / 2);
-    item.offX = Math.max(-maxX, Math.min(maxX, item.offX));
-    item.offY = Math.max(-maxY, Math.min(maxY, item.offY));
-  }
-
   function renderToContext(targetCtx, item, size) {
     targetCtx.fillStyle = "#000";
     targetCtx.fillRect(0, 0, size, size);
@@ -62,12 +55,12 @@
 
   function renderPreview() {
     const item = photos[activeIdx] || null;
-    if (item) clampOffsets(item, canvas.width);
     renderToContext(ctx, item, canvas.width);
 
     emptyPrompt.classList.toggle("hidden", Boolean(item));
     const hasPhotos = photos.length > 0;
     zoomSlider.disabled = !item;
+    btnFit.disabled = !item;
     btnReset.disabled = !item;
     btnDownloadOne.disabled = !item;
     btnDownloadAll.disabled = !hasPhotos;
@@ -266,8 +259,12 @@
     const item = photos[activeIdx];
     if (!item) return;
     e.preventDefault();
-    const delta = e.deltaY < 0 ? 0.08 : -0.08;
-    item.zoom = Math.max(1, Math.min(3.5, item.zoom + delta));
+    let dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= 100;
+    dy = Math.max(-120, Math.min(120, dy));
+    const factor = Math.exp(-dy * 0.00025);
+    item.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, item.zoom * factor));
     renderPreview();
   }, { passive: false });
 
@@ -299,6 +296,18 @@
 
   toggleGuide.addEventListener("change", () => {
     safeGuide.classList.toggle("hidden", !toggleGuide.checked);
+  });
+
+  btnFit.addEventListener("click", () => {
+    const item = photos[activeIdx];
+    if (!item) return;
+    const w = item.img.naturalWidth;
+    const h = item.img.naturalHeight;
+    const fitCircleZoom = Math.min(w, h) / Math.hypot(w, h);
+    item.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, fitCircleZoom));
+    item.offX = 0;
+    item.offY = 0;
+    renderPreview();
   });
 
   btnReset.addEventListener("click", () => {

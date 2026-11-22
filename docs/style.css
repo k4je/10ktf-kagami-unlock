@@ -227,6 +227,10 @@ body {
   justify-content: space-between;
   gap: 10px;
 }
+.control-buttons-left {
+  display: flex;
+  gap: 8px;
+}
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.84rem;
